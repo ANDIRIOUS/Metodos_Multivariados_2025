@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  rstudio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: estadistica_multivariada
+    image: proyecto-multivariados:latest
+
+    ports:
+      - "8787:8787"  # RStudio Server en http://localhost:8787
+
+    environment:
+      # Credenciales de RStudio Server
+      - USER=rstudio
+      - PASSWORD=estadistica123  # ⚠️ CAMBIAR en producción
+      - ROOT=TRUE
+
+      # Configuración de R
+      - DISABLE_AUTH=false
+
+    volumes:
+      # Montar directorio actual para desarrollo en vivo
+      - ./:/home/rstudio/proyecto
+      # Persistir librerías de R instaladas
+      - r-packages:/usr/local/lib/R/site-library
+
+    restart: unless-stopped
+
+    # Recursos (opcional, ajustar según necesidad)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '4.0'
+    #       memory: 8G
+
+volumes:
+  r-packages:
+    driver: local
